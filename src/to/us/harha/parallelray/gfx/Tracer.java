@@ -3,6 +3,8 @@ package to.us.harha.parallelray.gfx;
 import java.util.ArrayList;
 
 import to.us.harha.parallelray.util.Config;
+import to.us.harha.parallelray.util.math.Quaternion;
+import to.us.harha.parallelray.util.math.Vec3f;
 
 public class Tracer
 {
@@ -10,6 +12,7 @@ public class Tracer
 	private long              m_lastTime;
 	private long              m_deltaTime;
 
+	private Camera            m_camera;
 	private Scene             m_scene;
 	private ArrayList<Worker> m_workers;
 
@@ -17,6 +20,7 @@ public class Tracer
 	{
 		m_lastTime = System.nanoTime();
 		m_deltaTime = 0L;
+		m_camera = new Camera(new Vec3f(0.0f, 1.0f, 0.0f), new Quaternion(0.0f, 0.0f, 0.0f, -1.0f), 0.005f, 0.05f);
 		m_scene = new Scene();
 		m_workers = new ArrayList<Worker>();
 		setWorkerAmount(Config.g_thread_amount);
@@ -32,13 +36,13 @@ public class Tracer
 		int width = Config.g_window_width;
 		int height = Config.g_window_height;
 
-		if (n % 2 == 0 && n > 2)
+		if (n > 1)
 		{
-			width /= (n / 2);
-			height /= (n / 2);
-			for (int j = 0; j < n / 2; j++)
+			width /= n;
+			height /= n;
+			for (int j = 0; j < n; j++)
 			{
-				for (int i = 0; i < n / 2; i++)
+				for (int i = 0; i < n; i++)
 				{
 					m_workers.add(new Worker(width, height, i * width, j * height, i + j * width, this));
 				}
@@ -52,6 +56,7 @@ public class Tracer
 	public void update(float dt)
 	{
 		m_scene.update(dt);
+		m_camera.update(dt);
 	}
 
 	public void render(Display display)
@@ -59,7 +64,6 @@ public class Tracer
 		if (workersFinished())
 		{
 			long currentTime = System.nanoTime();
-			long oldDelta = m_deltaTime;
 			m_deltaTime = currentTime - m_lastTime;
 			for (Worker w : m_workers)
 			{
@@ -79,6 +83,11 @@ public class Tracer
 	public synchronized float getFPS()
 	{
 		return 1000.0f / (float) (m_deltaTime / 1000000L);
+	}
+
+	public Camera getCamera()
+	{
+		return m_camera;
 	}
 
 	public Scene getScene()

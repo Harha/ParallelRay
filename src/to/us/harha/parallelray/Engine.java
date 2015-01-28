@@ -9,7 +9,6 @@ public class Engine implements Runnable
 
 	private boolean       m_running;
 
-	private Thread        m_thread_run;
 	private Display       m_display;
 	private Tracer        m_tracer;
 	private InputListener m_ilistener;
