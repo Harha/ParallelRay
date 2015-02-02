@@ -92,7 +92,7 @@ public class Display extends Canvas
 	{
 		if (x < 0 || x > m_width || y < 0 || y > m_height)
 			return;
-		
+
 		v = MathUtils.smoothstep(MathUtils.clamp(v, 0.0f, 1.0f), 0.0f, 1.0f);
 
 		int index = x + y * m_width;
@@ -171,7 +171,7 @@ public class Display extends Canvas
 
 	public void setTitle(String title)
 	{
-		m_jframe.setTitle(m_title + " " + title);
+		m_jframe.setTitle(m_title + " | " + title);
 	}
 
 	public void setWidth(int m_width)

@@ -3,7 +3,7 @@ package to.us.harha.parallelray.gfx;
 import java.util.ArrayList;
 
 import to.us.harha.parallelray.util.Config;
-import to.us.harha.parallelray.util.math.Quaternion;
+import to.us.harha.parallelray.util.TimeUtils;
 import to.us.harha.parallelray.util.math.Vec3f;
 
 public class Tracer
@@ -18,9 +18,10 @@ public class Tracer
 
 	public Tracer()
 	{
-		m_lastTime = System.nanoTime();
-		m_deltaTime = 0L;
-		m_camera = new Camera(new Vec3f(0.0f, 1.0f, 0.0f), new Quaternion(0.0f, 0.0f, 0.0f, -1.0f), 0.005f, 0.05f);
+		TimeUtils.init();
+		TimeUtils.updateDelta();
+		TimeUtils.updateFPS();
+		m_camera = new Camera(new Vec3f(0.0f, 1.0f, 0.0f), 0.0005f, 0.005f);
 		m_scene = new Scene();
 		m_workers = new ArrayList<Worker>();
 		setWorkerAmount(Config.g_thread_amount);
@@ -63,15 +64,14 @@ public class Tracer
 	{
 		if (workersFinished())
 		{
-			long currentTime = System.nanoTime();
-			m_deltaTime = currentTime - m_lastTime;
+			TimeUtils.updateDelta();
+			TimeUtils.updateFPS();
 			for (Worker w : m_workers)
 			{
 				w.setDisplay(display);
 				Thread worker = new Thread(w, "Worker: " + w.getId());
 				worker.start();
 			}
-			m_lastTime = System.nanoTime();
 		}
 	}
 

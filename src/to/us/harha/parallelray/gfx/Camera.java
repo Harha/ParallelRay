@@ -7,17 +7,15 @@ import to.us.harha.parallelray.util.math.Vec3f;
 public class Camera
 {
 
-	private static final Vec3f YAXIS = new Vec3f(0.0f, 1.0f, 0.0f);
+	private Vec3f      m_pos;
+	private Quaternion m_rot;
+	private float      m_speed;
+	private float      m_sensitivity;
 
-	private Vec3f              m_pos;
-	private Quaternion         m_lookAt;
-	private float              m_speed;
-	private float              m_sensitivity;
-
-	public Camera(Vec3f pos, Quaternion lookAt, float speed, float sensitivity)
+	public Camera(Vec3f pos, float speed, float sensitivity)
 	{
 		m_pos = pos;
-		m_lookAt = lookAt;
+		m_rot = new Quaternion(0, 0, 1, 0);
 		m_speed = speed;
 		m_sensitivity = sensitivity;
 	}
@@ -27,41 +25,39 @@ public class Camera
 		// Camera movement
 		if (InputListener.getKeyboardKeys()[InputListener.KEY_W])
 		{
-			move(getForward(), m_speed);
+			move(getForward(), m_speed * dt);
 		} else if (InputListener.getKeyboardKeys()[InputListener.KEY_S])
 		{
-			move(getForward().negate(), m_speed);
+			move(getForward().negate(), m_speed * dt);
 		}
 		if (InputListener.getKeyboardKeys()[InputListener.KEY_A])
 		{
-			move(getRight().negate(), m_speed);
+			move(getRight().negate(), m_speed * dt);
 		} else if (InputListener.getKeyboardKeys()[InputListener.KEY_D])
 		{
-			move(getRight(), m_speed);
+			move(getRight(), m_speed * dt);
 		}
 		if (InputListener.getKeyboardKeys()[InputListener.KEY_R])
 		{
-			move(getUp(), m_speed);
+			move(getUp(), m_speed * dt);
 		} else if (InputListener.getKeyboardKeys()[InputListener.KEY_F])
 		{
-			move(getUp().negate(), m_speed);
+			move(getUp().negate(), m_speed * dt);
 		}
 
 		// Camera rotation
-		if (InputListener.getKeyboardKeys()[InputListener.KEY_UP])
-		{
-			rotate(getRight(), m_sensitivity);
-		} else if (InputListener.getKeyboardKeys()[InputListener.KEY_DOWN])
-		{
-			rotate(getRight(), -m_sensitivity);
-		}
+		if (InputListener.getKeyboardKeys()[InputListener.KEY_RIGHT])
+			rotate(getUp(), m_sensitivity * dt);
 		if (InputListener.getKeyboardKeys()[InputListener.KEY_LEFT])
-		{
-			rotate(getUp(), m_sensitivity);
-		} else if (InputListener.getKeyboardKeys()[InputListener.KEY_RIGHT])
-		{
-			rotate(getUp(), -m_sensitivity);
-		}
+			rotate(getUp(), -m_sensitivity * dt);
+		if (InputListener.getKeyboardKeys()[InputListener.KEY_UP])
+			rotate(getRight(), -m_sensitivity * dt);
+		if (InputListener.getKeyboardKeys()[InputListener.KEY_DOWN])
+			rotate(getRight(), m_sensitivity * dt);
+		if (InputListener.getKeyboardKeys()[InputListener.KEY_E])
+			rotate(getForward(), m_sensitivity * dt);
+		if (InputListener.getKeyboardKeys()[InputListener.KEY_Q])
+			rotate(getForward(), -m_sensitivity * dt);
 	}
 
 	public void move(Vec3f direction, float amount)
@@ -71,9 +67,8 @@ public class Camera
 
 	public void rotate(Vec3f axis, float theta)
 	{
-		Quaternion q = new Quaternion().createFromAxisAngle(axis.x, axis.y, axis.z, theta);
-		Quaternion q_inv = Quaternion.conjugate(q);
-		m_lookAt = Quaternion.mul(Quaternion.mul(q, m_lookAt), q_inv);
+		Quaternion rotation = new Quaternion().createFromAxisAngle(axis.x, axis.y, axis.z, theta);
+		m_rot = rotation.mul(m_rot).normalize();
 	}
 
 	public Vec3f getPos()
@@ -81,22 +76,24 @@ public class Camera
 		return m_pos;
 	}
 
-	public Vec3f getForward()
+	public Quaternion getRot()
 	{
-		// return m_lookAt.getForwardVector().normalize();
-		return new Vec3f(m_lookAt.x, m_lookAt.y, m_lookAt.z).normalize();
+		return m_rot;
 	}
 
-	public Vec3f getUp()
+	public Vec3f getForward()
 	{
-		//return m_lookAt.getUpVector().normalize();
-		return YAXIS.normalize();
+		return m_rot.getForwardVector().normalize();
 	}
 
 	public Vec3f getRight()
 	{
-		//return m_lookAt.getRightVector().normalize();
-		return new Vec3f(m_lookAt.x, m_lookAt.y, m_lookAt.z).cross(YAXIS).normalize();
+		return m_rot.getRightVector().normalize();
+	}
+
+	public Vec3f getUp()
+	{
+		return m_rot.getUpVector().normalize();
 	}
 
 }

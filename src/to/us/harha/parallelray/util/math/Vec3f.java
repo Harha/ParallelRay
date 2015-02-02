@@ -50,6 +50,14 @@ public class Vec3f
 		return this;
 	}
 
+	public Vec3f set(float x, float y, float z)
+	{
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		return this;
+	}
+
 	public Vec3f add(Vec3f v)
 	{
 		return new Vec3f(x + v.x, y + v.y, z + v.z);
@@ -98,6 +106,15 @@ public class Vec3f
 	public float dot(Vec3f v)
 	{
 		return x * v.x + y * v.y + z * v.z;
+	}
+
+	public Vec3f mul(Quaternion q)
+	{
+		Quaternion q_inv = q.conjugate();
+
+		Quaternion w = q.mul(this).mul(q_inv);
+
+		return new Vec3f(w.x, w.y, w.z);
 	}
 
 	public float length()

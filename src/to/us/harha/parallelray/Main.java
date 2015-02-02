@@ -17,7 +17,7 @@ public class Main
 	{
 		Locale.setDefault(Locale.UK);
 		Config.init();
-		g_display = new Display(Config.g_window_width, Config.g_window_height, Config.g_display_scale, "Parallel Ray tracer");
+		g_display = new Display(Config.g_window_width, Config.g_window_height, Config.g_display_scale, "Parallel Raytracer");
 		g_display.create();
 		g_tracer = new Tracer();
 		g_engine = new Engine(g_display, g_tracer);

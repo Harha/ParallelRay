@@ -3,6 +3,7 @@ package to.us.harha.parallelray;
 import to.us.harha.parallelray.gfx.Display;
 import to.us.harha.parallelray.gfx.Tracer;
 import to.us.harha.parallelray.util.Logger;
+import to.us.harha.parallelray.util.TimeUtils;
 
 public class Engine implements Runnable
 {
@@ -50,17 +51,12 @@ public class Engine implements Runnable
 	@Override
 	public void run()
 	{
-		long currentTime;
-		long lastTime = System.nanoTime();
 		while (m_running && m_display != null)
 		{
-			currentTime = System.nanoTime();
-			m_display.setTitle(String.format(" | Workers: %02d DeltaTime: %04dms FPS: %3.2f/s", m_tracer.getWorkers().size(), m_tracer.getDeltaTime() / 1000000L, m_tracer.getFPS()));
-
-			update((float) (m_tracer.getDeltaTime() / 10000000L));
+			m_display.setTitle(String.format("Workers: %02d DeltaTime: %2.2f FPS: %2.2f/s Eye: %s", m_tracer.getWorkers().size(), TimeUtils.getDelta(), TimeUtils.getFPS(), m_tracer.getCamera().getRot().toString()));
+			//m_display.setTitle();
+			update((float) TimeUtils.getDelta());
 			render();
-
-			lastTime = System.nanoTime();
 		}
 
 		stop();
