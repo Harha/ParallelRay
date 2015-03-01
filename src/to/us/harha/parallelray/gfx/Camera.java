@@ -83,17 +83,17 @@ public class Camera
 
 	public Vec3f getForward()
 	{
-		return m_rot.getForwardVector().normalize();
+		return m_rot.getForwardVector();
 	}
 
 	public Vec3f getRight()
 	{
-		return m_rot.getRightVector().normalize();
+		return m_rot.getRightVector();
 	}
 
 	public Vec3f getUp()
 	{
-		return m_rot.getUpVector().normalize();
+		return m_rot.getUpVector();
 	}
 
 }

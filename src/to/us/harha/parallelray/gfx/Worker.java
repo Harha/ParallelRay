@@ -98,16 +98,19 @@ public class Worker implements Runnable
 
 			if (xObject.getMaterial().getReflectivity() != 1.0f)
 			{
+				Vec3f L_Vector = l.getPos().sub(xFinal.getPos());
+				float L_length = L_Vector.length();
 				if (l.getLightType() == Config.g_light_types.DIRECTIONAL)
 				{
 					ray_shadow = new Ray(xFinal.getPos(), l.getDir().negate());
-				}/*else if (l.getLightType() == Config.g_light_types.POINT)
-				 {
-				 ray_shadow = new Ray(xFinal.getPos(), l.getPos().sub(xFinal.getPos()));
-				 } */
+					L_length = Float.MAX_VALUE;
+				} else if (l.getLightType() == Config.g_light_types.POINT)
+				{
+					ray_shadow = new Ray(xFinal.getPos(), L_Vector);
+				}
 
 				if (ray_shadow != null)
-					cFinal.set(cFinal.scale(Math.min(traceShadow(ray_shadow, s, xObject) + xObject.getMaterial().getReflectivity(), 1.0f)));
+					cFinal.set(cFinal.scale(Math.min(traceShadow(ray_shadow, s, xObject, L_length) + xObject.getMaterial().getReflectivity(), 1.0f)));
 			}
 
 		}
@@ -118,17 +121,43 @@ public class Worker implements Runnable
 			cFinal.set(cFinal.add(traceColor(ray_reflected, s, n + 1).scale(xObject.getMaterial().getReflectivity())));
 		}
 
+		if (xObject.getMaterial().getRefractivity() > 0.0f)
+		{
+			Ray ray_refracted;
+			Vec3f N = xFinal.getNorm();
+			float NdotI = r.getDir().dot(N), ior, n1, n2, cos_t;
+
+			if (NdotI > 0.0f)
+			{
+				n1 = r.getIOR();
+				n2 = xObject.getMaterial().getIOR();
+				N = N.negate();
+			} else
+			{
+				n1 = xObject.getMaterial().getIOR();
+				n2 = r.getIOR();
+				NdotI = -NdotI;
+			}
+
+			ior = n2 / n1;
+			cos_t = ior * ior * (1.0f - NdotI * NdotI);
+
+			ray_refracted = new Ray(xFinal.getPos(), r.getDir().refract(N, ior, NdotI, cos_t), 1.0f);
+			cFinal.set(cFinal.add(traceColor(ray_refracted, s, n + 1).scale(xObject.getMaterial().getRefractivity())));
+		}
+
 		cFinal.set(cFinal.add(xObject.getMaterial().getColorAmbient()));
 
 		return MathUtils.clamp(cFinal, 0.0f, 1.0f);
 	}
 
-	public static float traceShadow(Ray r, Scene s, TracerObject thisobj)
+	public static float traceShadow(Ray r, Scene s, TracerObject thisobj, float L_length)
 	{
 		Intersection xInit = null;
 		Intersection xFinal = null;
 		TracerObject xObject = null;
 		float tInit = Float.MAX_VALUE;
+		float weight = 1.0f;
 
 		for (TracerObject o : s.getObjects())
 		{
@@ -140,7 +169,7 @@ public class Worker implements Runnable
 			for (Primitive p : o.getPrimitives())
 			{
 				xInit = p.intersect(r);
-				if (xInit != null && xInit.getT() < tInit)
+				if (xInit != null && xInit.getT() < tInit && xInit.getT() < L_length)
 				{
 					xFinal = xInit;
 					tInit = xFinal.getT();
@@ -152,7 +181,13 @@ public class Worker implements Runnable
 		if (xFinal == null)
 			return 1.0f;
 
-		return 0.0f;
+		if (xObject.getMaterial().getReflectivity() > 0.0f)
+			weight -= xObject.getMaterial().getReflectivity();
+
+		if (xObject.getMaterial().getRefractivity() > 0.0f)
+			weight *= xObject.getMaterial().getRefractivity();
+
+		return weight;
 	}
 
 	public int getWidth()

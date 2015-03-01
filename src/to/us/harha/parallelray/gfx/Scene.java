@@ -15,21 +15,25 @@ public class Scene
 		m_objects = new ArrayList<TracerObject>();
 		m_lights = new ArrayList<Light>();
 
-		Material m_diffuse_white = new Material(new Vec3f(0.01f), new Vec3f(1.0f), new Vec3f(1.0f), 0.375f, 0.5f, 0.9f, 0.0f);
-		Material m_reflective_red = new Material(new Vec3f(0.01f), new Vec3f(1.0f, 0.0f, 0.0f), new Vec3f(1.0f), 0.10f, 1.0f, 0.5f, 0.25f);
-		Material m_reflective_green = new Material(new Vec3f(0.01f), new Vec3f(0.0f, 1.0f, 0.0f), new Vec3f(1.0f), 0.05f, 1.0f, 0.5f, 0.50f);
-		Material m_reflective_blue = new Material(new Vec3f(0.01f), new Vec3f(0.0f, 0.0f, 1.0f), new Vec3f(1.0f), 0.20f, 1.0f, 0.75f, 0.375f);
+		Material m_diffuse_white = new Material(new Vec3f(0.01f), new Vec3f(1.0f), new Vec3f(1.0f), 0.375f, 0.5f, 0.9f, 0.0f, 0, 0);
+		Material m_diffuse_red = new Material(new Vec3f(0.01f), new Vec3f(1.0f, 0.0f, 0.0f), new Vec3f(1.0f), 0.375f, 0.5f, 0.9f, 0.0f, 0, 0);
+		Material m_diffuse_green = new Material(new Vec3f(0.01f), new Vec3f(0.0f, 1.0f, 0.0f), new Vec3f(1.0f), 0.375f, 0.5f, 0.9f, 0.0f, 0, 0);
+		Material m_diffuse_blue = new Material(new Vec3f(0.01f), new Vec3f(0.0f, 0.0f, 1.0f), new Vec3f(1.0f), 0.375f, 0.5f, 0.9f, 0.0f, 0, 0);
+		Material m_reflective_red = new Material(new Vec3f(0.01f), new Vec3f(1.0f, 0.0f, 0.0f), new Vec3f(1.0f), 0.10f, 1.0f, 0.5f, 0.25f, 0, 0);
+		Material m_reflective_green = new Material(new Vec3f(0.01f), new Vec3f(0.0f, 1.0f, 0.0f), new Vec3f(1.0f), 0.05f, 1.0f, 0.5f, 0.50f, 0, 0);
+		Material m_reflective_blue = new Material(new Vec3f(0.01f), new Vec3f(0.0f, 0.0f, 1.0f), new Vec3f(1.0f), 0.20f, 1.0f, 0.75f, 0.375f, 0, 0);
+		Material m_reflective_metal = new Material(new Vec3f(0.01f), new Vec3f(0.0f, 0.0f, 0.0f), new Vec3f(1.0f), 0.10f, 1.0f, 0.5f, 1.0f, 0, 0);
+		Material m_refractive_glass = new Material(new Vec3f(0.01f), new Vec3f(0.0f, 0.0f, 0.0f), new Vec3f(1.0f), 0.10f, 1.0f, 0.5f, 0.0f, 1.0f, 1.52f);
 		
 		m_objects.add(new TracerObject(new Vec3f(0.0f, 0.0f, 0.0f), new Vec3f(0.0f, 1.0f, 0.0f), m_diffuse_white));
-		m_objects.add(new TracerObject(new Vec3f(0.0f, 0.0f, 2.5f), new Vec3f(0.0f, 0.0f, -1.0f), m_diffuse_white));
-		m_objects.add(new TracerObject(new Vec3f(0.0f, 1.0f, -5.0f), 1.0f, m_reflective_red));
-		m_objects.add(new TracerObject(new Vec3f(-2.5f, 1.0f, -5.0f), 1.0f, m_reflective_green));
-		m_objects.add(new TracerObject(new Vec3f(2.5f, 1.0f, -5.0f), 1.0f, m_reflective_blue));
+		m_objects.add(new TracerObject(new Vec3f(0.0f, 5.0f, 0.0f), new Vec3f(0.0f, -1.0f, 0.0f), m_diffuse_white));
+		m_objects.add(new TracerObject(new Vec3f(0.0f, 0.0f, -10.0f), new Vec3f(0.0f, 0.0f, 1.0f), m_diffuse_white));
+		m_objects.add(new TracerObject(new Vec3f(4.0f, 0.0f, 0.0f), new Vec3f(-1.0f, 0.0f, 0.0f), m_diffuse_red));
+		m_objects.add(new TracerObject(new Vec3f(-4.0f, 0.0f, 0.0f), new Vec3f(1.0f, 0.0f, 0.0f), m_diffuse_blue));
+		m_objects.add(new TracerObject(new Vec3f(1.0f, 0.75f, -4.0f), 0.75f, m_reflective_metal));
+		m_objects.add(new TracerObject(new Vec3f(-1.0f, 0.75f, -5.0f), 0.75f, m_refractive_glass));
 		
-		m_lights.add(new Light(new Vec3f(0.33f, -0.33f, 0.33f), new Vec3f(1.0f), 0.25f));
-		m_lights.add(new Light(new Vec3f(0.0f, 1.0f, 0.0f), new Vec3f(0.1f, 0.25f, 1.0f), 1.0f, 0.0f, 0.0f, 0.1f));
-		m_lights.add(new Light(new Vec3f(-5.0f, 1.0f, 0.0f), new Vec3f(1.0f, 0.25f, 0.1f), 1.0f, 0.0f, 0.0f, 0.1f));
-		m_lights.add(new Light(new Vec3f(5.0f, 1.0f, 0.0f), new Vec3f(0.1f, 1.0f, 0.25f), 1.0f, 0.0f, 0.0f, 0.1f));
+		m_lights.add(new Light(new Vec3f(0.0f, 4.0f, -5.0f), new Vec3f(1.0f), 1.0f, 0.0f, 0.0f, 0.1f));
 	}
 
 	public void update(float dt)

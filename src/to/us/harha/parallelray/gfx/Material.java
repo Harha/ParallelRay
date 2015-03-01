@@ -14,6 +14,8 @@ public class Material
 	private Vec3f                         m_color_diffuse;
 	private Vec3f                         m_color_specular;
 	private float                         m_reflectivity;
+	private float                         m_refractivity;
+	private float                         m_ior;
 
 	// Phong shading model variables
 	private float                         m_shininess;
@@ -24,7 +26,7 @@ public class Material
 	private float                         m_density;
 
 	// Phong material constructor
-	public Material(Vec3f color_ambient, Vec3f color_diffuse, Vec3f color_specular, float shininess, float reflectivity)
+	public Material(Vec3f color_ambient, Vec3f color_diffuse, Vec3f color_specular, float shininess, float reflectivity, float refractivity, float ior)
 	{
 		m_material_type = Config.g_material_types.PHONG;
 		m_color_ambient = color_ambient;
@@ -32,10 +34,12 @@ public class Material
 		m_color_specular = color_specular;
 		m_shininess = shininess;
 		m_reflectivity = reflectivity;
+		m_refractivity = refractivity;
+		m_ior = ior;
 	}
 
 	// Cook-torrance material constructor
-	public Material(Vec3f color_ambient, Vec3f color_diffuse, Vec3f color_specular, float roughness, float fresnel, float density, float reflectivity)
+	public Material(Vec3f color_ambient, Vec3f color_diffuse, Vec3f color_specular, float roughness, float fresnel, float density, float reflectivity, float refractivity, float ior)
 	{
 		m_material_type = Config.g_material_types.COOKTORRANCE;
 		m_color_ambient = color_ambient;
@@ -45,6 +49,8 @@ public class Material
 		m_fresnel = fresnel;
 		m_density = density;
 		m_reflectivity = reflectivity;
+		m_refractivity = refractivity;
+		m_ior = ior;
 	}
 
 	public Enum<Config.g_material_types> getMaterialType()
@@ -90,6 +96,16 @@ public class Material
 	public float getReflectivity()
 	{
 		return m_reflectivity;
+	}
+
+	public float getRefractivity()
+	{
+		return m_refractivity;
+	}
+
+	public float getIOR()
+	{
+		return m_ior;
 	}
 
 }

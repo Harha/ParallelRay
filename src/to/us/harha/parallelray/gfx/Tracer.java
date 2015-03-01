@@ -3,25 +3,17 @@ package to.us.harha.parallelray.gfx;
 import java.util.ArrayList;
 
 import to.us.harha.parallelray.util.Config;
-import to.us.harha.parallelray.util.TimeUtils;
 import to.us.harha.parallelray.util.math.Vec3f;
 
 public class Tracer
 {
-
-	private long              m_lastTime;
-	private long              m_deltaTime;
-
 	private Camera            m_camera;
 	private Scene             m_scene;
 	private ArrayList<Worker> m_workers;
 
 	public Tracer()
 	{
-		TimeUtils.init();
-		TimeUtils.updateDelta();
-		TimeUtils.updateFPS();
-		m_camera = new Camera(new Vec3f(0.0f, 1.0f, 0.0f), 0.0005f, 0.005f);
+		m_camera = new Camera(new Vec3f(0.0f, 1.0f, 0.0f), 0.005f, 0.1f);
 		m_scene = new Scene();
 		m_workers = new ArrayList<Worker>();
 		setWorkerAmount(Config.g_thread_amount);
@@ -64,8 +56,6 @@ public class Tracer
 	{
 		if (workersFinished())
 		{
-			TimeUtils.updateDelta();
-			TimeUtils.updateFPS();
 			for (Worker w : m_workers)
 			{
 				w.setDisplay(display);
@@ -73,16 +63,6 @@ public class Tracer
 				worker.start();
 			}
 		}
-	}
-
-	public synchronized long getDeltaTime()
-	{
-		return m_deltaTime;
-	}
-
-	public synchronized float getFPS()
-	{
-		return 1000.0f / (float) (m_deltaTime / 1000000L);
 	}
 
 	public Camera getCamera()

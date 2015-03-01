@@ -51,10 +51,14 @@ public class Engine implements Runnable
 	@Override
 	public void run()
 	{
+		TimeUtils.init();
+		TimeUtils.updateDelta();
+		TimeUtils.updateFPS();
 		while (m_running && m_display != null)
 		{
-			m_display.setTitle(String.format("Workers: %02d DeltaTime: %2.2f FPS: %2.2f/s Eye: %s", m_tracer.getWorkers().size(), TimeUtils.getDelta(), TimeUtils.getFPS(), m_tracer.getCamera().getRot().toString()));
-			//m_display.setTitle();
+			TimeUtils.updateDelta();
+			TimeUtils.updateFPS();
+			m_display.setTitle(String.format("Workers: %02d DeltaTime: %2.2f FPS: %2.2f/s Eye: %s Eye_length: %2.2f", m_tracer.getWorkers().size(), TimeUtils.getDelta(), TimeUtils.getFPS(), m_tracer.getCamera().getRot().toString(), m_tracer.getCamera().getRot().length()));
 			update((float) TimeUtils.getDelta());
 			render();
 		}

@@ -138,6 +138,16 @@ public class Vec3f
 		return this.sub(N.scale(N.dot(this)).scale(2.0f));
 	}
 
+	public Vec3f refract(Vec3f N, float n, float NdotI, float cos_t)
+	{
+		cos_t = (float) Math.sqrt(1.0 - cos_t);
+
+		if (cos_t < 1.0f)
+			return scale(n).add(N.scale(n * NdotI - cos_t));
+		else
+			return reflect(N);
+	}
+
 	public float getComponent(int i, float w)
 	{
 		if (i == 0)
